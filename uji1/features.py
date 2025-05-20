@@ -32,7 +32,7 @@ async def configure_event_handlers(client, user_id):
     """Konfigurasi semua fitur bot untuk user_id tertentu."""
 
     # Spam pesan ke grup dengan interval tertentu
-    @client.on(events.NewMessage(pattern=r'^gal hastle (.+) (\d+[smhd])$'))
+    @client.on(events.NewMessage(pattern=r'^moshi stellar (.+) (\d+[smhd])$'))
     async def hastle_handler(event):
         custom_message, interval_str = event.pattern_match.groups()
         group_id = event.chat_id
@@ -59,7 +59,7 @@ async def configure_event_handlers(client, user_id):
                 active_groups[group_id][user_id] = False
 
     # Hentikan spam di grup
-    @client.on(events.NewMessage(pattern=r'^gal stop$'))
+    @client.on(events.NewMessage(pattern=r'^moshi stop$'))
     async def stop_handler(event):
         group_id = event.chat_id
         if active_groups[group_id][user_id]:
@@ -69,12 +69,12 @@ async def configure_event_handlers(client, user_id):
             await event.reply("⚠️ Tidak ada spam yang berjalan untuk akun Anda di grup ini.")
 
     # Tes koneksi bot
-    @client.on(events.NewMessage(pattern=r'^gal ping$'))
+    @client.on(events.NewMessage(pattern=r'^moshi ping$'))
     async def ping_handler(event):
         await event.reply("🏓 Pong! Bot aktif.")
 
     # Broadcast pesan ke semua chat kecuali blacklist
-    @client.on(events.NewMessage(pattern=r'^gal bcstar (.+)$'))
+    @client.on(events.NewMessage(pattern=r'^moshi bcstar (.+)$'))
     async def broadcast_handler(event):
         custom_message = event.pattern_match.group(1)
         await event.reply(f"✅ Memulai broadcast ke semua chat: {custom_message}")
@@ -88,7 +88,7 @@ async def configure_event_handlers(client, user_id):
                 pass
 
     # Broadcast pesan hanya ke grup dengan interval tertentu
-    @client.on(events.NewMessage(pattern=r'^gal bcstargr(\d+) (\d+[smhd]) (.+)$'))
+    @client.on(events.NewMessage(pattern=r'^moshi bcstargr(\d+) (\d+[smhd]) (.+)$'))
     async def broadcast_group_handler(event):
         group_number = event.pattern_match.group(1)
         interval_str, custom_message = event.pattern_match.groups()[1:]
@@ -115,7 +115,7 @@ async def configure_event_handlers(client, user_id):
             await asyncio.sleep(interval)
 
     # Hentikan broadcast grup
-    @client.on(events.NewMessage(pattern=r'^gal stopbcstargr(\d+)$'))
+    @client.on(events.NewMessage(pattern=r'^moshi stopbcstargr(\d+)$'))
     async def stop_broadcast_group_handler(event):
         group_number = event.pattern_match.group(1)
         if active_bc_interval[user_id][f"group{group_number}"]:
@@ -125,14 +125,14 @@ async def configure_event_handlers(client, user_id):
             await event.reply(f"⚠️ Tidak ada broadcast grup {group_number} yang berjalan.")
 
     # Tambahkan grup/chat ke blacklist
-    @client.on(events.NewMessage(pattern=r'^gal bl$'))
+    @client.on(events.NewMessage(pattern=r'^moshi bl$'))
     async def blacklist_handler(event):
         chat_id = event.chat_id
         blacklist.add(chat_id)
         await event.reply("✅ Grup ini telah ditambahkan ke blacklist.")
 
     # Hapus grup/chat dari blacklist
-    @client.on(events.NewMessage(pattern=r'^gal unbl$'))
+    @client.on(events.NewMessage(pattern=r'^moshi unbl$'))
     async def unblacklist_handler(event):
         chat_id = event.chat_id
         if chat_id in blacklist:
@@ -142,30 +142,30 @@ async def configure_event_handlers(client, user_id):
             await event.reply("⚠️ Grup ini tidak ada dalam blacklist.")
 
     # Tampilkan daftar perintah
-    @client.on(events.NewMessage(pattern=r'^gal help$'))
+    @client.on(events.NewMessage(pattern=r'^moshi help$'))
     async def help_handler(event):
         help_text = (
             "📋 **Daftar Perintah yang Tersedia:**\n\n"
-            "1. gal hastle [pesan] [waktu][s/m/h/d]\n"
+            "1. moshi stellar [pesan] [waktu][s/m/h/d]\n"
             "   Spam pesan di grup dengan interval tertentu.\n"
-            "2. gal stop\n"
+            "2. moshi stop\n"
             "   Hentikan spam di grup.\n"
-            "3. gal ping\n"
+            "3. moshi ping\n"
             "   Tes koneksi bot.\n"
-            "4. gal bcstar [pesan]\n"
+            "4. moshi bcstar [pesan]\n"
             "   Broadcast ke semua chat kecuali blacklist.\n"
-            "5. gal bcstargr [waktu][s/m/h/d] [pesan]\n"
+            "5. moshi bcstargr [waktu][s/m/h/d] [pesan]\n"
             "   Broadcast hanya ke grup dengan interval tertentu.\n"
-            "6. gal stopbcstargr[1-10]\n"
+            "6. moshi stopbcstargr[1-10]\n"
             "   Hentikan broadcast ke grup tertentu.\n"
-            "7. gal bl\n"
+            "7. moshi bl\n"
             "    Tambahkan grup/chat ke blacklist.\n"
-            "8. gal unbl\n"
+            "8. moshi unbl\n"
             "    Hapus grup/chat dari blacklist.\n"
         )
         await event.reply(help_text)
 
-    @client.on(events.NewMessage(pattern=r'^gal setreply'))
+    @client.on(events.NewMessage(pattern=r'^moshi setreply'))
     async def set_auto_reply(event):
         me = await client.get_me()
         uid = me.id
@@ -199,7 +199,7 @@ async def configure_event_handlers(client, user_id):
                     pass  # Jangan tampilkan error
 
     # Hentikan semua pengaturan
-    @client.on(events.NewMessage(pattern=r'^gal stopall$'))
+    @client.on(events.NewMessage(pattern=r'^moshi stopall$'))
     async def stop_all_handler(event):
         for group_key in active_bc_interval[user_id].keys():
             active_bc_interval[user_id][group_key] = False
